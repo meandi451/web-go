@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web-go
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: web-go
+  template:
+    metadata:
+      labels:
+        app: web-go
+    spec:
+      containers:
+      - name: web-go
+        image: web-go:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8080
