@@ -4,6 +4,7 @@ import (
 	"html/template" // para trabajar con la plantilla HTML
 	"log"           // para mostrar mensajes por la terminal
 	"net/http"      // para crear el servidor web
+	"os"            // para leer el nombre del pod y el entorno
 )
 
 // Pagina agrupa los datos que se insertan en la plantilla.
@@ -20,10 +21,21 @@ var plantilla = template.Must(template.ParseFiles("templates/index.html"))
 
 // inicio atiende la ruta principal: rellena la plantilla y la envía al navegador.
 func inicio(w http.ResponseWriter, r *http.Request) {
+	// Dentro de Kubernetes el hostname es el nombre del pod
+	nombrePod, err := os.Hostname()
+	if err != nil {
+		nombrePod = "desconocido"
+	}
+	// El entorno (pruebas o produccion) llega por una variable de entorno
+	entorno := os.Getenv("POD_NAMESPACE")
+	if entorno == "" {
+		entorno = "local"
+	}
+
 	// Datos que se insertan en los huecos de la plantilla
 	datos := Pagina{
 		Titulo:  "Producto 1 - Entorno de desarrollo",
-		Mensaje: "Soy alumno de la UOC",
+		Mensaje: "Soy alumno de la UOC | Pod: " + nombrePod + " | Entorno: " + entorno,
 		Imagen:  "/static/img/uoc.png",
 	}
 	// Si algo falla al generar la página, se devuelve un error 500

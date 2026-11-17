@@ -16,5 +16,10 @@ spec:
       - name: web-go
         image: web-go:latest
         imagePullPolicy: IfNotPresent
+        env:
+        - name: POD_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
         ports:
         - containerPort: 8080
